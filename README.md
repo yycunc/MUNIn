@@ -40,13 +40,13 @@ The 8 required command parameters are:
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
 
-To run HMRF tissue by sample, use <br>
+To run HMRF sample by sample, use <br>
 ./HMRF -I Example/GM_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O Example/GM_output/ 
 
 3. With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. Users also need to prepare four files respectively containing the estimated parameters of theta, phi, gamma and psi of each sample. 
 
 The 8 required command parameters are
--I, input data file for MUNIn, which is a text file with 6 columns respectively as tissue index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
+-I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
 
 -NP, size of HiC contact matrix.
 
