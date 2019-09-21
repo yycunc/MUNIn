@@ -40,10 +40,10 @@ The 8 required command parameters are:
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
 
-To run HMRF tissue by tissue, use 
-./HMRF -I Example/GM_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O Example/CP_output/ 
+To run HMRF tissue by sample, use <br>
+./HMRF -I Example/GM_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O Example/GM_output/ 
 
-3. With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as tissue index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. Users also need to prepare four files respectively containing the estimated parameters of theta, phi, gamma and psi of each tissue. 
+3. With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. Users also need to prepare four files respectively containing the estimated parameters of theta, phi, gamma and psi of each sample. 
 
 The 8 required command parameters are
 -I, input data file for MUNIn, which is a text file with 6 columns respectively as tissue index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
@@ -58,15 +58,15 @@ The 8 required command parameters are
 
 -Binsize, fragment length.
 
--Theta, theta input file, which is text file of one column listing the estimated theta from each tissue.
+-Theta, theta input file, which is text file of one column listing the estimated theta from each sample.
 
--Phi, phi input file, which is text file of one column listing the estimated phi from each tissue.
+-Phi, phi input file, which is text file of one column listing the estimated phi from each sample.
 
--Gamma, gamma input file, which is text file of one column listing the estimated gamma from each tissue.
+-Gamma, gamma input file, which is text file of one column listing the estimated gamma from each sample.
 
--Psi, psi input file, which is text file of one column listing the estimated psi from each tissue.
+-Psi, psi input file, which is text file of one column listing the estimated psi from each sample.
 
--Alpha, tissue dependency input file. When there are two tissues, it contains 5 columns respectively as order index, peak status in tissue 1, peak statues in tissue 2, heterogeneity of peak status in the two tissues (0, shared background; 1, tissue-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. The example file is alpha_GM_IMR90_1_50875000_51725000.txt.
+-Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. The example file is alpha_GM_IMR90_1_50875000_51725000.txt.
 
 -SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible.
 
@@ -117,7 +117,7 @@ The input data file for MUNIn is a text file, with 6 columns respectively as sam
 1 50875000  50975000  17  20.46908700 -1 <br>
 ...
 
-The alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two tissues (0, shared background; 1, tissue-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_CP_GZ_1_6595000_7965000.txt
+The alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_CP_GZ_1_6595000_7965000.txt
 
 // order_index	peak_status_sample1	peak_status_sample2	proportion <br>
 0	0	0	0 0.51573187 <br>
