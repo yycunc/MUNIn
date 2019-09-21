@@ -1,0 +1,13 @@
+Best LogLike = 1503260.6415
+Tissue = 0
+Best Theta = 0.7971
+Best Phi = 9.8234
+Best Gamma = -0.0185
+Best Psi = 0.6000
+Tissue = 1
+Best Theta = 0.7693
+Best Phi = 8.2968
+Best Gamma = -0.0294
+Best Psi = 0.5982
+NumGibbs = 10000
+SEED = 1
