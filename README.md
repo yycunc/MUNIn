@@ -18,13 +18,13 @@ After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
 ## MUNIn Examples
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2016). 
 
-1. For each tissue, we start from HiC contact matrix, and calculate expected frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
+1. For each sample, we start from HiC contact matrix, and calculate expected frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
 
 2. We first perform peak calling in each sample. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. 
 
 The 8 required command parameters are:
 
--I, HiC input data file, which is a text file, with 5 columns respectively as tissue index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. The example file for GM12878 is GM_1_50875000_51725000.txt.
+-I, HiC input data file, which is a text file, with 5 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. The example file for GM12878 is GM_1_50875000_51725000.txt.
 
 -NP, size of HiC contact matrix.
 
@@ -50,7 +50,7 @@ The 8 required command parameters are
 
 -NP, size of HiC contact matrix.
 
--NT, number of tissues.
+-NT, number of samples.
 
 -NG, number of Gibbs sample.
 
