@@ -1,7 +1,7 @@
 # MUNIn
-MUNIn (Multiple tissue UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple tissues
+MUNIn (Multiple tissue UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple tissues/samples.
 
-MUNIn adopts a hierarchical hidden Markov random field (H-HMRF) model for identifying long-range chromatin interactions from multiple tissues, which is an extension of our previous HMRF peak caller HMRFBayesHiC (Xu et al., Bioinformatics, 2016). Comparing to the existing HiC peak calling methods, MUNin simultaneously account for spatial dependency within the same tissue, as well as dependency among different tissues. Specially, in MUNIn, the status of each pair of interacting chromatin loci (peak or non-peak) depends not only on the status of loci pairs in its neighborhood region, but also on the status of the same loci pair in other tissues.
+MUNIn adopts a hierarchical hidden Markov random field (H-HMRF) model for identifying long-range chromatin interactions from multiple samples, which is an extension of our previous HMRF peak caller HMRFBayesHiC (Xu et al., Bioinformatics, 2016). Comparing to the existing HiC peak calling methods, MUNin simultaneously account for spatial dependency within the same sample, as well as dependency among different samples. Specially, in MUNIn, the status of each pair of interacting chromatin loci (peak or non-peak) depends not only on the status of loci pairs in its neighborhood region, but also on the status of the same loci pair in other samples.
 
 MUNIn is maintained by Yuchen Yang [yyuchen@email.unc.edu] or Ming Hu [hum@ccf.org].
 
@@ -117,7 +117,7 @@ The input data file for MUNIn is a text file, with 6 columns respectively as sam
 1 50875000  50975000  17  20.46908700 -1 <br>
 ...
 
-The alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_CP_GZ_1_6595000_7965000.txt
+The alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
 
 // order_index	peak_status_sample1	peak_status_sample2	proportion <br>
 0	0	0	0 0.51573187 <br>
