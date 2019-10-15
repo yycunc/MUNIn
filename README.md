@@ -3,7 +3,7 @@ MUNIn (Multiple tissue UNifying long-range chromatin Interaction detector): a st
 
 MUNIn adopts a hierarchical hidden Markov random field (H-HMRF) model for identifying long-range chromatin interactions from multiple samples, which is an extension of our previous HMRF peak caller HMRFBayesHiC (Xu et al., Bioinformatics, 2016). Comparing to the existing HiC peak calling methods, MUNin simultaneously account for spatial dependency within the same sample, as well as dependency among different samples. Specially, in MUNIn, the status of each pair of interacting chromatin loci (peak or non-peak) depends not only on the status of loci pairs in its neighborhood region, but also on the status of the same loci pair in other samples.
 
-MUNIn is maintained by Yuchen Yang [yyuchen@email.unc.edu] or Ming Hu [hum@ccf.org].
+MUNIn is maintained by Yuchen Yang [yyuchen@email.unc.edu], Ming Hu [hum@ccf.org] and Yun Li [yun_li@med.unc.edu].
 
 ## News and Updates
 Sep 20, 2019
