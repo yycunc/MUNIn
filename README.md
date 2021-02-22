@@ -30,7 +30,7 @@ We first perform peak calling in each sample separately using ***H-HMRF*** metho
 50875000        50905000        272     184.994981      1.315629e-09 <br>
 50875000        50915000        186     149.215834      2.027127e-03 <br>
 50875000        50925000        124     126.085980      5.855781e-01 <br>
-... <br>
+... 
 ```
 
 ***The 8 required command parameters*** by H-HMRF include:
