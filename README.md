@@ -82,6 +82,13 @@ Users also need to files for each of the four parameters, theta, phi, gamma and 
 11.9797 <br>
 9.1174 
 
+Users can prepare the file via following commands:
+
+phi1=`head -n 2 HMRF_outdir/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
+phi2=`head -n 2 HMRF_outdir/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
+echo $phi1 > phi.txt
+echo $phi2 >> phi.txt
+
 ***The 8 required command parameters*** by MUNIn include: 
 -I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
 
