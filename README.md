@@ -163,7 +163,7 @@ Best Psi = 0.5982 <br>
 NumGibbs = 10000 <br>
 SEED = 1
 
-
-
+## Citation
+Liu, W., Abnousi, A., Zhang, Q., Li, Y., Hu, M., Yang, Y. (2021+) MUNIn (Multiple cell-type UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple cell types. *biorxiv*, [DOI: 10.1101/2020.11.12.380782](https://www.biorxiv.org/content/10.1101/2020.11.12.380782v1)
 
 
