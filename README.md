@@ -18,11 +18,25 @@ After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
 ## MUNIn Examples
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2016). 
 
-1. For each sample, we start from HiC contact matrix, and calculate expected frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
+### Calculate expected contact frequency using Fit-Hi-C
+For each sample, we start from HiC contact matrix, and calculate expected contact frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
 
-2. We first perform peak calling in each sample. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. 
+### Call peaks for each sample separately
+We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency and p-value estimated by Fit-Hi-C. For example, the first several lines of GM_1_50875000_51725000.txt are 
 
-The 8 required command parameters are:
+50875000        50885000        820     511.407636      2.803035e-36 <br>
+50875000        50895000        383     264.041244      4.051192e-12 <br>
+50875000        50905000        272     184.994981      1.315629e-09 <br>
+50875000        50915000        186     149.215834      2.027127e-03 <br>
+50875000        50925000        124     126.085980      5.855781e-01 <br>
+50875000        50935000        142     109.534362      1.659331e-03 <br>
+50875000        50945000        91      97.241790       7.500622e-01 <br>
+50875000        50955000        88      87.827042       5.068214e-01 <br>
+50875000        50965000        74      80.107627       7.672609e-01 <br>
+50875000        50975000        60      73.695970       9.546180e-01 <br>
+... <br>
+
+***The 8 required command parameters*** by H-HMRF include:
 
 -I, HiC input data file, which is a text file, with 5 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. The example file for GM12878 is GM_1_50875000_51725000.txt.
 
@@ -40,12 +54,50 @@ The 8 required command parameters are:
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
 
-To run HMRF sample by sample, use <br>
+The command line for executing ***H-HMRF method*** in each sample is <br>
 ./HMRF -I Example/GM_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O Example/GM_output/ 
 
-3. With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. Users also need to prepare four files respectively containing the estimated parameters of theta, phi, gamma and psi of each sample. 
+### Call peaks across samples using MUNIn
+With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
 
-The 8 required command parameters are
+// sample_index	frag1	frag2	Oij Eij	peak_status <br>
+0 50875000  50885000 820 511.407636  -1 <br>
+0 50875000  50895000 383 264.041244  -1 <br>
+0 50875000  50905000 272 184.994981  -1 <br>
+0 50875000  50915000 186 149.215834  -1 <br>
+0 50875000  50925000 124 126.085980  -1 <br>
+0 50875000  50935000 142 109.534362  -1 <br>
+0 50875000  50945000 91  97.241790 -1 <br>
+0 50875000  50955000 88  87.827042 -1 <br>
+0 50875000  50965000 74  80.107627 -1 <br>
+0 50875000  50975000 60  73.695970 -1 <br>
+... <br>
+1 50875000  50885000  248 156.12634000  -1 <br>
+1 50875000  50895000  89  77.77461700 -1 <br>
+1 50875000  50905000  71  54.13943900 -1 <br>
+1 50875000  50915000  58  43.29327000 -1 <br>
+1 50875000  50925000  26  35.84396800 -1 <br>
+1 50875000  50935000  41  30.64742500 -1 <br>
+1 50875000  50945000  28  27.01628600 -1 <br>
+1 50875000  50955000  26  24.37738100 1 <br>
+1 50875000  50965000  12  22.24322700 1 <br>
+1 50875000  50975000  17  20.46908700 -1 <br>
+...
+
+MUNIn also requires an alpha file, which show the dependency level between different samples (e.g. tissues or cells lines). Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
+
+// order_index	peak_status_sample1	peak_status_sample2	proportion <br>
+0	0	0	0 0.51573187 <br>
+1	1	0	1	0.18276334 <br>
+2	0	1	1	0.02927497 <br>
+3	1	1	2	0.27222982 <br>
+
+Users also need to files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. The file of each parameter is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
+
+11.9797 <br>
+9.1174 
+
+***The 8 required command parameters*** by MUNIn include: 
 -I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
 
 -NP, size of HiC contact matrix.
@@ -72,63 +124,8 @@ The 8 required command parameters are
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is MUNIn_outputs.
 
-To run MUNIn, use 
+The command line for ***MUNIn***, use 
 ./MUNIn -I Example/GM_IMR90_Record_long_format.txt -NP 86 -NT 2 -NG 10000 -Bininitial 50875000 -Binsize 10000 -Theta Example/theta.txt -Phi Example/phi.txt -Gamma Example/gamma.txt -Psi Example/psi.txt -Alpha Example/alpha_GM_IMR90_1_50875000_51725000.txt -SEED 1 -O MUNIn_output/
-
-## Input formats for HMRF
-The input data file for HMRF is a text file, with 5 columns respectively as middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and p-value estimated by Fit-Hi-C. For example, the first several lines of GM_1_50875000_51725000.txt are 
-
-50875000        50885000        820     511.407636      2.803035e-36 <br>
-50875000        50895000        383     264.041244      4.051192e-12 <br>
-50875000        50905000        272     184.994981      1.315629e-09 <br>
-50875000        50915000        186     149.215834      2.027127e-03 <br>
-50875000        50925000        124     126.085980      5.855781e-01 <br>
-50875000        50935000        142     109.534362      1.659331e-03 <br>
-50875000        50945000        91      97.241790       7.500622e-01 <br>
-50875000        50955000        88      87.827042       5.068214e-01 <br>
-50875000        50965000        74      80.107627       7.672609e-01 <br>
-50875000        50975000        60      73.695970       9.546180e-01 <br>
-... <br>
-
-## Input formats for MUNIn
-The input data file for MUNIn is a text file, with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
-
-// sample_index	frag1	frag2	Oij Eij	peak_status <br>
-0 50875000  50885000 820 511.407636  -1 <br>
-0 50875000  50895000 383 264.041244  -1 <br>
-0 50875000  50905000 272 184.994981  -1 <br>
-0 50875000  50915000 186 149.215834  -1 <br>
-0 50875000  50925000 124 126.085980  -1 <br>
-0 50875000  50935000 142 109.534362  -1 <br>
-0 50875000  50945000 91  97.241790 -1 <br>
-0 50875000  50955000 88  87.827042 -1 <br>
-0 50875000  50965000 74  80.107627 -1 <br>
-0 50875000  50975000 60  73.695970 -1 <br>
-... <br>
-1 50875000  50885000  248 156.12634000  -1 <br>
-1 50875000  50895000  89  77.77461700 -1 <br>
-1 50875000  50905000  71  54.13943900 -1 <br>
-1 50875000  50915000  58  43.29327000 -1 <br>
-1 50875000  50925000  26  35.84396800 -1 <br>
-1 50875000  50935000  41  30.64742500 -1 <br>
-1 50875000  50945000  28  27.01628600 -1 <br>
-1 50875000  50955000  26  24.37738100 1 <br>
-1 50875000  50965000  12  22.24322700 1 <br>
-1 50875000  50975000  17  20.46908700 -1 <br>
-...
-
-The alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
-
-// order_index	peak_status_sample1	peak_status_sample2	proportion <br>
-0	0	0	0 0.51573187 <br>
-1	1	0	1	0.18276334 <br>
-2	0	1	1	0.02927497 <br>
-3	1	1	2	0.27222982 <br>
-
-The parameter file is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
-
-11.9797 <br>
-9.1174 
 
 ## Output formats of MUNIn
 MUNIn outputs multiple files, the majority of which are files recoding peak status and parameters for each sample.
