@@ -25,11 +25,11 @@ For each sample, we start from HiC contact matrix, and calculate expected contac
 We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency and p-value estimated by Fit-Hi-C. For example, the first several lines of GM_1_50875000_51725000.txt are 
 
 ```
-50875000        50885000        820     511.407636      2.803035e-36 <br>
-50875000        50895000        383     264.041244      4.051192e-12 <br>
-50875000        50905000        272     184.994981      1.315629e-09 <br>
-50875000        50915000        186     149.215834      2.027127e-03 <br>
-50875000        50925000        124     126.085980      5.855781e-01 <br>
+50875000        50885000        820     511.407636      2.803035e-36
+50875000        50895000        383     264.041244      4.051192e-12
+50875000        50905000        272     184.994981      1.315629e-09
+50875000        50915000        186     149.215834      2.027127e-03
+50875000        50925000        124     126.085980      5.855781e-01
 ... 
 ```
 
@@ -60,18 +60,18 @@ The command line for executing ***H-HMRF method*** in each sample is <br>
 With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
 
 ```
-// sample_index	frag1	frag2	Oij Eij	peak_status <br>
-0 50875000  50885000 820 511.407636  -1 <br>
-0 50875000  50895000 383 264.041244  -1 <br>
-0 50875000  50905000 272 184.994981  -1 <br>
-0 50875000  50915000 186 149.215834  -1 <br>
-0 50875000  50925000 124 126.085980  -1 <br>
-... <br>
-1 50875000  50885000  248 156.12634000  -1 <br>
-1 50875000  50895000  89  77.77461700 -1 <br>
-1 50875000  50905000  71  54.13943900 -1 <br>
-1 50875000  50915000  58  43.29327000 -1 <br>
-1 50875000  50925000  26  35.84396800 -1 <br>
+// sample_index	frag1	frag2	Oij Eij	peak_status
+0 50875000  50885000 820 511.407636  -1
+0 50875000  50895000 383 264.041244  -1
+0 50875000  50905000 272 184.994981  -1
+0 50875000  50915000 186 149.215834  -1
+0 50875000  50925000 124 126.085980  -1
+...
+1 50875000  50885000  248 156.12634000  -1
+1 50875000  50895000  89  77.77461700 -1
+1 50875000  50905000  71  54.13943900 -1
+1 50875000  50915000  58  43.29327000 -1
+1 50875000  50925000  26  35.84396800 -1
 ...
 ```
 
