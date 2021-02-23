@@ -51,11 +51,13 @@ We first perform peak calling in each sample separately using ***H-HMRF*** metho
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
 
-The command line for executing ***H-HMRF method*** in each sample is <br>
+The command lines for executing ***H-HMRF method*** in two samples (e.g. GM12878 and IMR90), respectively, are <br>
+
 ```
-./HMRF -I Example/GM_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O Example/GM_output/ 
+./HMRF -I GM12878_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O GM12878_output/
+./HMRF -I IMR90_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O IMR90_output/
 ```
- 
+
 ### Call peaks across samples using MUNIn
 With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
 
@@ -75,30 +77,37 @@ With the peak calling results from each sample, we lable the sample with differe
 ...
 ```
 
-MUNIn also requires an alpha file, which show the dependency level between different samples (e.g. tissues or cells lines). Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
+MUNIn requires an alpha file, which show the dependency level between different samples (e.g. tissues or cells lines). Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
 
 ```
-// order_index	peak_status_sample1	peak_status_sample2	proportion <br>
-0	0	0	0 0.51573187 <br>
-1	1	0	1	0.18276334 <br>
-2	0	1	1	0.02927497 <br>
-3	1	1	2	0.27222982 <br>
+// order_index	peak_status_sample1	peak_status_sample2	proportion
+0	0	0	0 0.51573187
+1	1	0	1	0.18276334
+2	0	1	1	0.02927497
+3	1	1	2	0.27222982
+```
+
+Sample dependency can be estimated using ***estAlpha*** function via the folloing command line. 
+
+```
+./estAlpha -I GM_IMR90_Record_long_format.txt -NP 138 -NT 2 -Bininitial $begin -Binsize 10000 -O ./
+mv alpha.txt alpha_GM12878_IMR90_1_50875000_51725000.txt
 ```
 
 Users also need to files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. The file of each parameter is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
 
 ```
-11.9797 <br>
+11.9797
 9.1174 
 ```
 
 Users can prepare the file from the H-HMRF output via following commands:
 
 ```
-phi1=`head -n 2 Example/HMRF_outdir/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
-phi2=`head -n 2 Example/HMRF_outdir/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
-echo $phi1 > Example/phi.txt
-echo $phi2 >> Example/phi.txt
+phi1=`head -n 2 HMRF_outdir/GM12878/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
+phi2=`head -n 2 HMRF_outdir/IMR90/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
+echo $phi1 > phi.txt
+echo $phi2 >> phi.txt
 ```
 
 ***The 8 required command parameters*** by MUNIn include: 
@@ -130,7 +139,7 @@ echo $phi2 >> Example/phi.txt
 
 The command line for ***MUNIn***, use 
 ```
-./MUNIn -I Example/GM_IMR90_Record_long_format.txt -NP 86 -NT 2 -NG 10000 -Bininitial 50875000 -Binsize 10000 -Theta Example/theta.txt -Phi Example/phi.txt -Gamma Example/gamma.txt -Psi Example/psi.txt -Alpha Example/alpha_GM_IMR90_1_50875000_51725000.txt -SEED 1 -O Example/MUNIn_output/
+./MUNIn -I GM_IMR90_Record_long_format.txt -NP 86 -NT 2 -NG 10000 -Bininitial 50875000 -Binsize 10000 -Theta theta.txt -Phi phi.txt -Gamma gamma.txt -Psi psi.txt -Alpha alpha_GM_IMR90_1_50875000_51725000.txt -SEED 1 -O MUNIn_output/
 ```
 
 ## Output formats of MUNIn
@@ -138,30 +147,30 @@ MUNIn outputs multiple files, the majority of which are files recoding peak stat
 The output Hi-C peak recode file is a text file, with 5 columns respectively as middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency, peak status and original Fit-Hi-C pvalue in sample 1 and sample 2, respectively, and posterior probablitis for shared peaks, sample 1-specific peak and sample 2-specific peak. For example, the first ten lines of PP.txt are
 
 ```
-// frag1	frag2	Oij_sample1	Eij_sample1	peak_status_sample1 original_Fit-Hi-C_pvalue_sample1  Oij_sample2	Eij_sample2	peak_status_sample2 original_Fit-Hi-C_pvalue_sample2 <br>
-50875000  50885000  820 511.4076  1 0.000000e+00  248 156.1263  -1  0.000000e+00  0.32240863  0.39526601  0.12683203 <br>
-50875000  50895000  383 264.0412  1 0.000000e+00  89  77.7746 -1  1.134804e-01  0.00105054  0.09128604  0.01032674 <br>
-50875000  50905000  272 184.9950  -1  0.000000e+00  71  54.1394 -1  1.596326e-02  0.00008979  0.10087206  0.00079958 <br>
-50875000  50915000  186 149.2158  -1  2.027130e-03  58  43.2933 -1  1.881117e-02  0.00000319  0.00319080  0.00099670 <br>
-50875000  50925000  124 126.0860  -1  5.855781e-01  26  35.8440 -1  9.635358e-01  0.00000008  0.00083995  0.00009658 <br>
+// frag1	frag2	Oij_sample1	Eij_sample1	peak_status_sample1 original_Fit-Hi-C_pvalue_sample1  Oij_sample2	Eij_sample2	peak_status_sample2 original_Fit-Hi-C_pvalue_sample2
+50875000  50885000  820 511.4076  1 0.000000e+00  248 156.1263  -1  0.000000e+00  0.32240863  0.39526601  0.12683203
+50875000  50895000  383 264.0412  1 0.000000e+00  89  77.7746 -1  1.134804e-01  0.00105054  0.09128604  0.01032674
+50875000  50905000  272 184.9950  -1  0.000000e+00  71  54.1394 -1  1.596326e-02  0.00008979  0.10087206  0.00079958
+50875000  50915000  186 149.2158  -1  2.027130e-03  58  43.2933 -1  1.881117e-02  0.00000319  0.00319080  0.00099670
+50875000  50925000  124 126.0860  -1  5.855781e-01  26  35.8440 -1  9.635358e-01  0.00000008  0.00083995  0.00009658
 ...
 ```
 
 The output parameter recode file is a text file, with maximum likelihood value, estimated parameters of theta, phi, gamma and psi, and the number of Gibbs sample and seed used for MUNIn outputted. For example, the texts of the file Record_Para.txt are
 
 ```
-Best LogLike = 1503260.6415 <br>
-Tissue = 0 <br>
-Best Theta = 0.7971 <br>
-Best Phi = 9.8234 <br>
-Best Gamma = -0.0185 <br>
-Best Psi = 0.6000 <br>
-Tissue = 1 <br>
-Best Theta = 0.7693 <br>
-Best Phi = 8.2968 <br>
-Best Gamma = -0.0294 <br>
-Best Psi = 0.5982 <br>
-NumGibbs = 10000 <br>
+Best LogLike = 1503260.6415
+Tissue = 0
+Best Theta = 0.7971
+Best Phi = 9.8234
+Best Gamma = -0.0185
+Best Psi = 0.6000
+Tissue = 1
+Best Theta = 0.7693
+Best Phi = 8.2968
+Best Gamma = -0.0294
+Best Psi = 0.5982
+NumGibbs = 10000
 SEED = 1
 ```
 
