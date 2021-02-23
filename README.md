@@ -54,12 +54,22 @@ We first perform peak calling in each sample separately using ***H-HMRF*** metho
 The command lines for executing ***H-HMRF method*** in two samples (e.g. GM12878 and IMR90), respectively, are <br>
 
 ```
+mkdir GM12878_output
+mkdir IMR90_output
 ./HMRF -I GM12878_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O GM12878_output/
 ./HMRF -I IMR90_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O IMR90_output/
 ```
 
 ### Call peaks across samples using MUNIn
-With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn, which contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
+With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn. For example,
+
+```
+awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' GM12878_output/Record_long_format.txt >GM12878_output/GM12878_1_50875000_51725000_long_format.txt
+awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' IMR90_output/Record_long_format.txt >IMR90_output/IMR90_1_50875000_51725000_long_format.txt
+cat GM12878_output/GM12878_1_50875000_51725000_long_format.txt IMR90_output/IMR90_1_50875000_51725000_long_format.txt >GM12878_IMR90_Record_long_format.txt
+```
+
+The input file contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
 
 ```
 // sample_index	frag1	frag2	Oij Eij	peak_status
@@ -77,7 +87,15 @@ With the peak calling results from each sample, we lable the sample with differe
 ...
 ```
 
-MUNIn requires an alpha file, which show the dependency level between different samples (e.g. tissues or cells lines). Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
+MUNIn requires an alpha file, which contains the dependency level between different samples (e.g. tissues or cells lines). Sample dependency can be estimated using ***estAlpha*** function via the folloing command line. 
+
+```
+./estAlpha -I GM_IMR90_Record_long_format.txt -NP 138 -NT 2 -Bininitial $begin -Binsize 10000 -O ./
+mv alpha.txt alpha_GM12878_IMR90_1_50875000_51725000.txt
+```
+
+
+Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
 
 ```
 // order_index	peak_status_sample1	peak_status_sample2	proportion
@@ -87,12 +105,6 @@ MUNIn requires an alpha file, which show the dependency level between different 
 3	1	1	2	0.27222982
 ```
 
-Sample dependency can be estimated using ***estAlpha*** function via the folloing command line. 
-
-```
-./estAlpha -I GM_IMR90_Record_long_format.txt -NP 138 -NT 2 -Bininitial $begin -Binsize 10000 -O ./
-mv alpha.txt alpha_GM12878_IMR90_1_50875000_51725000.txt
-```
 
 Users also need to files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. The file of each parameter is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
 
