@@ -22,7 +22,13 @@ In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp 
 For each sample, we start from HiC contact matrix, and calculate expected contact frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
 
 ### Call peaks for each sample separately
-We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency and p-value estimated by Fit-Hi-C. For example, the first several lines of GM_1_50875000_51725000.txt are 
+We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency and p-value estimated by Fit-Hi-C. 
+
+```
+zcat Fithic_output/GM12878_chr1_10kb.spline_pass2.significances.txt.gz | awk '$2>=50875000 && $2<=51725000 && $4>=50875000 && $4<=51725000 && $4<$2' | awk '{print "0\t"$4"\t"$2"\t"$5"\t"$8"\t"$6}' | sort -nk 2 >GM12878_1_50875000_51725000.txt
+```
+
+Here are the first several lines of GM12878_1_50875000_51725000.txt
 
 ```
 50875000        50885000        820     511.407636      2.803035e-36
@@ -51,13 +57,17 @@ We first perform peak calling in each sample separately using ***H-HMRF*** metho
 
 -O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
 
-The command lines for executing ***H-HMRF method*** in two samples (e.g. GM12878 and IMR90), respectively, are <br>
+The command lines for executing ***H-HMRF method*** in each of the two samples, GM12878 and IMR90, are <br>
 
 ```
 mkdir GM12878_output
 mkdir IMR90_output
 ./HMRF -I GM12878_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O GM12878_output/
 ./HMRF -I IMR90_1_50875000_51725000.txt -NP 138 -Tune 100 -NG 10000 -Bininitial 50875000 -Binsize 10000 -SEED 123 -O IMR90_output/
+
+mkdir HMRF_output
+mv GM12878_output HMRF_output
+mv IMR90_output HMRF_output
 ```
 
 ### Call peaks across samples using MUNIn
@@ -69,7 +79,7 @@ awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' IMR90_output/Record_long_for
 cat GM12878_output/GM12878_1_50875000_51725000_long_format.txt IMR90_output/IMR90_1_50875000_51725000_long_format.txt >GM12878_IMR90_Record_long_format.txt
 ```
 
-The input file contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM_IMR90_Record_long_format.txt are
+The input file contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM12878_IMR90_Record_long_format.txt are
 
 ```
 // sample_index	frag1	frag2	Oij Eij	peak_status
@@ -94,8 +104,7 @@ MUNIn requires an alpha file, which contains the dependency level between differ
 mv alpha.txt alpha_GM12878_IMR90_1_50875000_51725000.txt
 ```
 
-
-Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM_IMR90_1_50875000_51725000.txt
+Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM12878_IMR90_1_50875000_51725000.txt
 
 ```
 // order_index	peak_status_sample1	peak_status_sample2	proportion
@@ -105,15 +114,7 @@ Alpha file is a text file with 5 columns, when there are two samples, respective
 3	1	1	2	0.27222982
 ```
 
-
-Users also need to files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. The file of each parameter is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
-
-```
-11.9797
-9.1174 
-```
-
-Users can prepare the file from the H-HMRF output via following commands:
+MUNIn also requires files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. For example, users can generate the file from the H-HMRF output via following commands:
 
 ```
 phi1=`head -n 2 HMRF_outdir/GM12878/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
@@ -122,8 +123,15 @@ echo $phi1 > phi.txt
 echo $phi2 >> phi.txt
 ```
 
+The file of each parameter is a text file of one column listing the estimated parameter, for example phi, from each sample. Here is an example for phi.txt
+
+```
+11.9797
+9.1174 
+```
+
 ***The 8 required command parameters*** by MUNIn include: 
--I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM_IMR90_Record_long_format.txt.
+-I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM12878_IMR90_Record_long_format.txt.
 
 -NP, size of HiC contact matrix.
 
@@ -143,7 +151,7 @@ echo $phi2 >> phi.txt
 
 -Psi, psi input file, which is text file of one column listing the estimated psi from each sample.
 
--Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. The example file is alpha_GM_IMR90_1_50875000_51725000.txt.
+-Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. The example file is alpha_GM12878_IMR90_1_50875000_51725000.txt.
 
 -SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible.
 
