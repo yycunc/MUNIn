@@ -75,7 +75,7 @@ With the peak calling results from each sample, we lable the sample with differe
 
 ```
 awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' GM12878_output/Record_long_format.txt >GM12878_output/GM12878_1_50875000_51725000_long_format.txt
-awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' IMR90_output/Record_long_format.txt >IMR90_output/IMR90_1_50875000_51725000_long_format.txt
+awk '{print "1\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' IMR90_output/Record_long_format.txt >IMR90_output/IMR90_1_50875000_51725000_long_format.txt
 cat GM12878_output/GM12878_1_50875000_51725000_long_format.txt IMR90_output/IMR90_1_50875000_51725000_long_format.txt >GM12878_IMR90_Record_long_format.txt
 ```
 
