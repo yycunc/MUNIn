@@ -97,24 +97,24 @@ The input file contains 6 columns respectively as the sample index, middle posit
 ...
 ```
 
-MUNIn requires a file for alpha, which specifies the probabilities in the multinomial distribution for modeling the heterogeneity of peak status and the dependency level between different samples (e.g. tissues or cells lines) for a given bin pair (see the method section in the manuscript for details). With *K* samples, alpha is a vector of length *2^K*, with each entry specifying the probability of one configuration. More specifically, Mult(1,α)≜Mult(1,α_({-1,-1,…,-1}),α_({1,-1,…,-1}),…,α_({1,1,…,1})). Here each subscript of α stands for one configuration, for example, α_({-1,-1,…,-1}) is the probability that the (i,j) pair is background in all K samples. Alpha can be estimated using the ***estAlpha*** function via the following command line. 
+MUNIn requires a file for alpha, which specifies the probabilities in the multinomial distribution for modeling the heterogeneity of peak status and the dependency level between different samples (e.g. tissues or cells lines) for a given bin pair (see the method section in the manuscript for details). With *K* samples, alpha is a vector of length *2^K*, with each entry specifying the probability of one configuration. More specifically, for each bin pair, we model the *2^K* peak configurations by Mult(1,α)≜Mult(1,α_({-1,-1,…,-1}),α_({1,-1,…,-1}),…,α_({1,1,…,1})). Here each subscript of α stands for one configuration, for example, α_({-1,-1,…,-1}) is the probability that the (i,j) pair is background in all K samples. Alpha can be estimated using the ***estAlpha*** function via the following command line. 
 
 ```
 ./estAlpha -I GM_IMR90_Record_long_format.txt -NP 138 -NT 2 -Bininitial $begin -Binsize 10000 -O ./
 mv alpha.txt alpha_GM12878_IMR90_1_50875000_51725000.txt
 ```
 
-Alpha file is a text file with 5 columns, when there are two samples, respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. Here is an example for alpha_GM12878_IMR90_1_50875000_51725000.txt
+When there are two samples, the file is a text file with 5 columns in the order of the configuration order index, peak status in sample 1, peak status in sample 2, number of peaks in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and the proportion of each peak status configuration in all the fragment pairs. Here is an example alpha file alpha_GM12878_IMR90_1_50875000_51725000.txt
 
 ```
-// order_index	peak_status_sample1	peak_status_sample2	proportion
+// order_index	peak_status_sample1	peak_status_sample2 num_peaks	proportion
 0	0	0	0 0.51573187
 1	1	0	1	0.18276334
 2	0	1	1	0.02927497
 3	1	1	2	0.27222982
 ```
 
-MUNIn also requires files for each of the four parameters, theta, phi, gamma and psi, according to the estimation results from H-HMRF method. For example, users can generate the file from the H-HMRF output via following commands:
+MUNIn also requires files for each of the four parameters for each sample: theta, phi, gamma, and psi. In practice, we take estimates from the H-HMRF method. For example, users can generate the file from the H-HMRF outputs via the following commands:
 
 ```
 phi1=`head -n 2 HMRF_outdir/GM12878/Record_Para.txt | tail -n 1 | cut -f 4 -d ' '`
@@ -131,17 +131,17 @@ The file of each parameter is a text file of one column listing the estimated pa
 ```
 
 ***The 8 required command parameters*** by MUNIn include: 
--I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. The example file is GM12878_IMR90_Record_long_format.txt.
+-I, input data file for MUNIn, which is a text file with 6 columns respectively as sample index, middle position of fragment 1, middle position of fragment 2, observed frequency, expected frequency, and peak status. The example file is GM12878_IMR90_Record_long_format.txt.
 
--NP, size of HiC contact matrix.
+-NP, number of fragments/bins in the input HiC data. Same as in H-HMRF.
 
 -NT, number of samples.
 
--NG, number of Gibbs sample.
+-NG, number of Gibbs samples. Same as in H-HMRF.
 
--Bininitial, the middle point of the first fragment 1.
+-Bininitial, the middle poSITION of the fragment 1. Same as in H-HMRF.
 
--Binsize, fragment length.
+-Binsize, fragment/bin length. Same as in H-HMRF.
 
 -Theta, theta input file, which is text file of one column listing the estimated theta from each sample.
 
@@ -151,20 +151,20 @@ The file of each parameter is a text file of one column listing the estimated pa
 
 -Psi, psi input file, which is text file of one column listing the estimated psi from each sample.
 
--Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak statues in sample 2, heterogeneity of peak status in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak) and proportion of each status in all the fragment pairs. The example file is alpha_GM12878_IMR90_1_50875000_51725000.txt.
+-Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak status in sample 2, number of peaks in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak), and proportion of each peak status configuration in all the fragment pairs. The example alpha file is alpha_GM12878_IMR90_1_50875000_51725000.txt.
 
--SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible.
+-SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible. 
 
--O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is MUNIn_outputs.
+-O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is MUNIn_outputs. 
 
-The command line for ***MUNIn***, use 
+The command lines for executing ***MUNIn*** in two samples, GM12878 and IMR90, are <br>
 ```
 ./MUNIn -I GM_IMR90_Record_long_format.txt -NP 86 -NT 2 -NG 10000 -Bininitial 50875000 -Binsize 10000 -Theta theta.txt -Phi phi.txt -Gamma gamma.txt -Psi psi.txt -Alpha alpha_GM_IMR90_1_50875000_51725000.txt -SEED 1 -O MUNIn_output/
 ```
 
 ## Output formats of MUNIn
 MUNIn outputs multiple files, the majority of which are files recoding peak status and parameters for each sample.
-The output Hi-C peak recode file is a text file, with 5 columns respectively as middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency, peak status and original Fit-Hi-C pvalue in sample 1 and sample 2, respectively, and posterior probablitis for shared peaks, sample 1-specific peak and sample 2-specific peak. For example, the first ten lines of PP.txt are
+The output Hi-C peak recode file is a text file, with 5 columns respectively as middle position of fragment 1, middle position of fragment 2, observed frequency, expected frequency, peak status and original Fit-Hi-C pvalue in sample 1 and sample 2, respectively, and posterior probablities for shared peaks, sample 1-specific peak and sample 2-specific peak. For example, the first ten lines of PP.txt are
 
 ```
 // frag1	frag2	Oij_sample1	Eij_sample1	peak_status_sample1 original_Fit-Hi-C_pvalue_sample1  Oij_sample2	Eij_sample2	peak_status_sample2 original_Fit-Hi-C_pvalue_sample2
@@ -176,7 +176,7 @@ The output Hi-C peak recode file is a text file, with 5 columns respectively as 
 ...
 ```
 
-The output parameter recode file is a text file, with maximum likelihood value, estimated parameters of theta, phi, gamma and psi, and the number of Gibbs sample and seed used for MUNIn outputted. For example, the texts of the file Record_Para.txt are
+The output parameter recode file is a text file, with maximum likelihood value, estimated parameters of theta, phi, gamma and psi, and the number of Gibbs samples and seed used for MUNIn outputted. For example, the texts of the file Record_Para.txt are
 
 ```
 Best LogLike = 1503260.6415
