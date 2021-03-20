@@ -16,7 +16,7 @@ After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
 2. Copy the C++ executable program MUNIn to any folder and it is ready to use.
 
 ## MUNIn Examples
-In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2016). 
+In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2014). 
 
 ### Calculate expected contact frequency using Fit-Hi-C
 For each sample, we start from HiC contact matrix, and calculate expected contact frequency using a modified version of Fit-Hi-C (Kaul et al., 2020 and Ay et al., 2014) , which can be downloaded [here](https://github.com/ay-lab/fithic). The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
@@ -200,6 +200,8 @@ Kaul, A., Bhattacharyya, S., & Ay, F. (2020). Identifying statistically signific
 Ay, F., Bailey, T. L., & Noble, W. S. (2014). Statistical confidence estimation for Hi-C data reveals regulatory chromatin contacts. Genome research, 24(6), 999–1011. https://doi.org/10.1101/gr.160374.113
 
 Liu, W., Abnousi, A., Zhang, Q., Li, Y., Hu, M., Yang, Y. (2021+) MUNIn (Multiple cell-type UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple cell types. *biorxiv*, [DOI: 10.1101/2020.11.12.380782](https://www.biorxiv.org/content/10.1101/2020.11.12.380782v1)
+
+Rao, S. S., Huntley, M. H., Durand, N. C., Stamenova, E. K., Bochkov, I. D., Robinson, J. T., Sanborn, A. L., Machol, I., Omer, A. D., Lander, E. S., & Aiden, E. L. (2014). A 3D map of the human genome at kilobase resolution reveals principles of chromatin looping. Cell, 159(7), 1665–1680. https://doi.org/10.1016/j.cell.2014.11.021
 
 Xu, Z., Zhang, G., Jin, F., Chen, M., Furey, T. S., Sullivan, P. F., Qin, Z., Hu, M., & Li, Y. (2016). A hidden Markov random field-based Bayesian method for the detection of long-range chromosomal interactions in Hi-C data. Bioinformatics (Oxford, England), 32(5), 650–656. https://doi.org/10.1093/bioinformatics/btv650
 
