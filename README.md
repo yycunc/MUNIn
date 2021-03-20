@@ -15,7 +15,7 @@ After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
 1. Unzip the file MUNIn_1.0.tar.gz, you will get a C++ executable program MUNIn, a folder Example including toy data, and a folder MUNIn_outputs including output results of MUNIn.
 2. Copy the C++ executable program MUNIn to any folder and it is ready to use.
 
-## MUNIn Examples
+## Using MUNIn
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2014). 
 
 ### Calculate expected contact frequency using Fit-Hi-C
