@@ -1,5 +1,5 @@
 # MUNIn
-MUNIn (Multiple tissue UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple tissues/samples.
+MUNIn (Multiple sample UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple tissues/samples (Liu et al., 2021+).
 
 MUNIn adopts a hierarchical hidden Markov random field (H-HMRF) model for identifying long-range chromatin interactions from multiple samples, which is an extension of our previous HMRF peak caller HMRFBayesHiC (Xu et al., Bioinformatics, 2016). Comparing to the existing HiC peak calling methods, MUNin simultaneously account for spatial dependency within the same sample, as well as dependency among different samples. Specially, in MUNIn, the status of each pair of interacting chromatin loci (peak or non-peak) depends not only on the status of loci pairs in its neighborhood region, but also on the status of the same loci pair in other samples.
 
@@ -19,16 +19,16 @@ After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2016). 
 
 ### Calculate expected contact frequency using Fit-Hi-C
-For each sample, we start from HiC contact matrix, and calculate expected contact frequency using a modified version of Fit-Hi-C, which can be downloaded from here. The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
+For each sample, we start from HiC contact matrix, and calculate expected contact frequency using a modified version of Fit-Hi-C (Kaul et al., 2020 and Ay et al., 2014) , which can be downloaded [here](https://github.com/ay-lab/fithic). The command interface of our utility software is exactly the same as Fit-Hi-C. Please refer to Fit-Hi-C for more details at https://noble.gs.washington.edu/proj/fit-hi-c/. 
 
 ### Call peaks for each sample separately
-We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load, which is a text file with 5 columns, separated by the table delimiter, respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency and p-value estimated by Fit-Hi-C. 
+We first perform peak calling in each sample separately using ***H-HMRF*** method. To conduct peak calling, users need to prepare HiC data file for HiC_HMRF_Bayes_Files to load using outputs from Fit-Hi-C, which is a text file with five columns. The five columns in order are: middle position of fragment 1, middle position of fragment 2, observed contact frequency, expected contact frequency, and p-value. The last two come from estimates from Fit-Hi-C. Shown below is an example input file with 10kb resolution where we extract information from a Fit-Hi-C output file GM12878_chr1_10kb.spline_pass2.significances.txt.gz and focus on chr1:50875000-51725000.
 
 ```
 zcat Fithic_output/GM12878_chr1_10kb.spline_pass2.significances.txt.gz | awk '$2>=50875000 && $2<=51725000 && $4>=50875000 && $4<=51725000 && $4<$2' | awk '{print "0\t"$4"\t"$2"\t"$5"\t"$8"\t"$6}' | sort -nk 2 >GM12878_1_50875000_51725000.txt
 ```
 
-Here are the first several lines of GM12878_1_50875000_51725000.txt
+Here are the first several lines of the example input file GM12878_1_50875000_51725000.txt
 
 ```
 50875000        50885000        820     511.407636      2.803035e-36
@@ -41,21 +41,21 @@ Here are the first several lines of GM12878_1_50875000_51725000.txt
 
 ***The 8 required command parameters*** by H-HMRF include:
 
--I, HiC input data file, which is a text file, with 5 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency and expected frequency. The example file for GM12878 is GM_1_50875000_51725000.txt.
+-I, HiC input data file, which is a text file, with 5 columns in the order of the middle position of fragment 1, the middle position of fragment 2, observed contact frequency, expected contact frequency, and p-value estimated from Fit-Hi-C. See the above section for an example input file GM_1_50875000_51725000.txt.
 
--NP, size of HiC contact matrix.
+-NP, number of fragments/bins in the input HiC data.
 
--Tune, .
+-Tune, number of steps for tuning the parameters.
 
--NG, number of Gibbs sample.
+-NG, number of Gibbs samples.
 
--Bininitial, the middle point of the first fragment 1.
+-Bininitial, the middle position of the first fragment/bin.
 
--Binsize, fragment length.
+-Binsize, fragment/bin length.
 
 -SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible.
 
--O, output folder, which contains the output files of inferred peak status and parameters in the HMRF peak calling model. The example file is GM_output.
+-O, output folder, which contains the output files of inferred peak status and parameters in the H-HMRF peak calling model. The example file is GM_output.
 
 The command lines for executing ***H-HMRF method*** in each of the two samples, GM12878 and IMR90, are <br>
 
@@ -71,7 +71,7 @@ mv IMR90_output HMRF_output
 ```
 
 ### Call peaks across samples using MUNIn
-With the peak calling results from each sample, we lable the sample with different indices, i.e. 0, 1, 2..., and concatenate the long format output files together as the input file for MUNIn. For example,
+With the peak calling results from each sample using H-HMRF, we first lable the sample with different indices, i.e. 0, 1, 2..., and then concatenate the long format output files together as the input file for MUNIn. For example,
 
 ```
 awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' GM12878_output/Record_long_format.txt >GM12878_output/GM12878_1_50875000_51725000_long_format.txt
@@ -79,7 +79,7 @@ awk '{print "1\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' IMR90_output/Record_long_for
 cat GM12878_output/GM12878_1_50875000_51725000_long_format.txt IMR90_output/IMR90_1_50875000_51725000_long_format.txt >GM12878_IMR90_Record_long_format.txt
 ```
 
-The input file contains 6 columns respectively as sample index, middle point of fragment 1, middle point of fragment 2, observed frequency, expected frequency and peak status. For example, the first several lines of GM12878_IMR90_Record_long_format.txt are
+The input file contains 6 columns respectively as the sample index, middle position of fragment 1, middle position of fragment 2, observed frequency, expected frequency, and peak status. The expected frequency is estimated from Fit-Hi-C and the peak status is estimated from H-HMRF for each sample independently. For example, the first several lines of GM12878_IMR90_Record_long_format.txt are
 
 ```
 // sample_index	frag1	frag2	Oij Eij	peak_status
@@ -97,7 +97,7 @@ The input file contains 6 columns respectively as sample index, middle point of 
 ...
 ```
 
-MUNIn requires an alpha file, which contains the dependency level between different samples (e.g. tissues or cells lines). Sample dependency can be estimated using ***estAlpha*** function via the folloing command line. 
+MUNIn requires a file for alpha, which specifies the probabilities in the multinomial distribution for modeling the heterogeneity of peak status and the dependency level between different samples (e.g. tissues or cells lines) for a given bin pair (see the method section in the manuscript for details). With *K* samples, alpha is a vector of length *2^K*, with each entry specifying the probability of one configuration. More specifically, Mult(1,α)≜Mult(1,α_({-1,-1,…,-1}),α_({1,-1,…,-1}),…,α_({1,1,…,1})). Here each subscript of α stands for one configuration, for example, α_({-1,-1,…,-1}) is the probability that the (i,j) pair is background in all K samples. Alpha can be estimated using the ***estAlpha*** function via the following command line. 
 
 ```
 ./estAlpha -I GM_IMR90_Record_long_format.txt -NP 138 -NT 2 -Bininitial $begin -Binsize 10000 -O ./
@@ -195,6 +195,15 @@ SEED = 1
 ```
 
 ## Citation
+Kaul, A., Bhattacharyya, S., & Ay, F. (2020). Identifying statistically significant chromatin contacts from Hi-C data with FitHiC2. Nature protocols, 15(3), 991–1012. https://doi.org/10.1038/s41596-019-0273-0
+
+Ay, F., Bailey, T. L., & Noble, W. S. (2014). Statistical confidence estimation for Hi-C data reveals regulatory chromatin contacts. Genome research, 24(6), 999–1011. https://doi.org/10.1101/gr.160374.113
+
 Liu, W., Abnousi, A., Zhang, Q., Li, Y., Hu, M., Yang, Y. (2021+) MUNIn (Multiple cell-type UNifying long-range chromatin Interaction detector): a statistical framework for identifying long-range chromatin interactions from multiple cell types. *biorxiv*, [DOI: 10.1101/2020.11.12.380782](https://www.biorxiv.org/content/10.1101/2020.11.12.380782v1)
+
+Xu, Z., Zhang, G., Jin, F., Chen, M., Furey, T. S., Sullivan, P. F., Qin, Z., Hu, M., & Li, Y. (2016). A hidden Markov random field-based Bayesian method for the detection of long-range chromosomal interactions in Hi-C data. Bioinformatics (Oxford, England), 32(5), 650–656. https://doi.org/10.1093/bioinformatics/btv650
+
+
+
 
 
