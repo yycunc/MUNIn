@@ -1,8 +1,15 @@
 # In this README, we show examples for simulating contact matrices for three samples under two scenarios: 1)all three samples have the same sequencing depth and 2)
 the sequencing depth in sample 3 is half of that in sample 1 and sample 2.
 
+
 #Installation
-Download the C++ executable program simHMRF/simHMRF_diffdepth into a chosen local folder and it is ready to use.
+Users can directly download the C++ executable program simHMRF/simHMRF_diffdepth into a chosen local folder and it is ready to use.
+
+Or users can download the C++ script sim_HMRF.cpp/sim_HMRF_diffdepth.cpp and compile the script by the command lines below.
+
+module load gsl
+g++ -Wall -O3 sim_HMRF.cpp -I /nas02/apps/gsl-1.15/include/gsl -lgsl -lgslcblas -lm -o simHMRF
+
 
 # Running the simulation
 
