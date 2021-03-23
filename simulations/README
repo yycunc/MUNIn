@@ -1,0 +1,37 @@
+# In this README, we show examples for simulating contact matrices for three samples under two scenarios: 1)all three samples have the same sequencing depth and 2)
+the sequencing depth in sample 3 is half of that in sample 1 and sample 2.
+
+#Installation
+Download the C++ executable program simHMRF/simHMRF_diffdepth into a chosen local folder and it is ready to use.
+
+# Running the simulation
+
+The simulation requires 8 command parameters, including:
+
+-NP, number of fragments/bins in the input HiC data.
+
+-NG, number of Gibbs samples.
+
+-NT, number of samples users want to simulate.
+
+-Theta, theta prior.
+
+-Phi, phi prior.
+
+-Gamma, gamma prior.
+
+-Psi, psi prior.
+
+-Alpha, sample dependency input file. When there are two samples, it contains 5 columns respectively as order index, peak status in sample 1, peak status in sample 2, number of peaks in the two samples (0, shared background; 1, sample-specific peak; 2, shared peak), and proportion of each peak status configuration in all the fragment pairs. The example alpha file is alpha_0.9.txt.
+
+-SEED, seed of the random number generator. Setting the seed to a fixed value can make the results reproducible.
+
+-O, output folder, which contains the output files of inferred peak status and parameters in the H-HMRF peak calling model. The example file is GM_output.
+
+## The command lines for simulating three samples with the same sequencing depth is
+./simHMRF -NP 100 -NG 10000 -NT 3 -Theta 1.5 -Phi 10.0 -Gamma 0 -Psi 0.2 -Alpha alpha_0.9.txt -O OutDir -SEED 1
+
+# The command lines for simulating three samples where the sequencing depth in sample 3 is half of that in sample 1 and sample 2 is
+./simHMRF_diffdepth -NP 100 -NG 10000 -NT 3 -Theta 1.5 -Phi 10.0 -Gamma 0 -Psi 0.2 -Alpha alpha_0.9.txt -O OutDir -SEED 1
+
+
