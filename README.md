@@ -71,7 +71,7 @@ mv IMR90_output HMRF_output
 ```
 
 ### Call peaks across samples using MUNIn
-With the peak calling results from each sample using H-HMRF, we first lable the sample with different indices, i.e. 0, 1, 2..., and then concatenate the long format output files together as the input file for MUNIn. For example,
+With the peak calling results from each sample using H-HMRF, we first label the sample with different indices, i.e. 0, 1, 2..., and then concatenate the long format output files together as the input file for MUNIn. For example,
 
 ```
 awk '{print "0\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7}' GM12878_output/Record_long_format.txt >GM12878_output/GM12878_1_50875000_51725000_long_format.txt
