@@ -16,10 +16,13 @@ Sep 20, 2019
 
 ## Installation
 
-1. Users can download the C++ executable program MUNIn to a chosen local folder "local_path" and it is ready to use.
-2. Or users can download the source codes of MUNIn (three cpp files: MUNIn_main.cpp, MUNIn_head.h and MUNIn_toolbox.cpp) into a chosen local folder "local_path", and compile them following the command:
+Users can download the C++ executable program [MUNIn](https://github.com/yycunc/MUNIn/blob/master/MUNIn) to a chosen local folder "local_path" and it is ready to use.
 
+Or users can download the [source codes of MUNIn](https://github.com/yycunc/MUNIn/tree/master/src) (three cpp files: MUNIn_main.cpp, MUNIn_head.h and MUNIn_toolbox.cpp) into a chosen local folder "local_path", and compile them using gsl following the command:
 
+g++ -Wall -O3 MUNIn_main.cpp -I /nas02/apps/gsl-1.15/include/gsl -lgsl -lgslcblas -lm -o MUNIn
+
+-I, the directory of gsl.
 
 ## Using MUNIn
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2014). 
