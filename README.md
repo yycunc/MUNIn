@@ -20,7 +20,7 @@ Users can download the C++ executable program [MUNIn](https://github.com/yycunc/
 
 Or users can download the [source codes of MUNIn](https://github.com/yycunc/MUNIn/tree/master/src) (three cpp files: MUNIn_main.cpp, MUNIn_head.h and MUNIn_toolbox.cpp) by the command `svn checkout https://github.com/yycunc/MUNIn/trunk/src` into a chosen local folder "local_path", and compile them using gsl following the command:
 
-`g++ -Wall -O3 MUNIn_main.cpp -I /nas02/apps/gsl-1.15/include/gsl -lgsl -lgslcblas -lm -o MUNIn`
+`g++ -Wall -O3 local_path/src/MUNIn_main.cpp -I /nas02/apps/gsl-1.15/include/gsl -lgsl -lgslcblas -lm -o local_path/MUNIn`
 
 -I, the directory of gsl.
 
