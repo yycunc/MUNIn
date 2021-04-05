@@ -88,8 +88,8 @@ vector< vector<int> > lowObs;
 gsl_rng *rng;
 int seed;
 
-#include "HMRF_head_fixpeak.h"
-#include "HMRF_toolbox_fixpeak.cpp"
+#include "MUNIn_head.h"
+#include "MUNIn_toolbox.cpp"
 
 int main(int argc, char **argv)
 {
