@@ -6,14 +6,20 @@ MUNIn adopts a hierarchical hidden Markov random field (H-HMRF) model for identi
 MUNIn is maintained by Yuchen Yang [yyuchen@email.unc.edu], Ming Hu [hum@ccf.org] and Yun Li [yun_li@med.unc.edu].
 
 ## News and Updates
+Apr 4, 2021
+* Version 2.0 released
+  + Fix some bugs
+  
 Sep 20, 2019
 * Version 1.0 released
   + First offical release
 
 ## Installation
-After downloading the MUNIn_1.0.tar.gz into a chosen local folder "local_path",
-1. Unzip the file MUNIn_1.0.tar.gz, you will get a C++ executable program MUNIn, a folder Example including toy data, and a folder MUNIn_outputs including output results of MUNIn.
-2. Copy the C++ executable program MUNIn to any folder and it is ready to use.
+
+1. Users can download the C++ executable program MUNIn to a chosen local folder "local_path" and it is ready to use.
+2. Or users can download the source codes of MUNIn (three cpp files: MUNIn_main.cpp, MUNIn_head.h and MUNIn_toolbox.cpp) into a chosen local folder "local_path", and compile them following the command:
+
+
 
 ## Using MUNIn
 In this example, we use the TAD in chromosome 1 from 50875000 bp to 51725000 bp (denoted as "TAD_50875000_51725000") from two cell lines, GM12878 and IMR90, at 10 KB resolution (Rao et al. Nature, 2014). 
